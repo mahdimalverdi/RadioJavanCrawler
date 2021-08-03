@@ -34,11 +34,7 @@ namespace RadioJavanCrawler
         }
 
         private static readonly List<Song> songs = new List<Song>();
-
-        [Obsolete]
-        static void Main(string[] args)
-        {
-            var urls = new string[]
+        private static string[] urls = new string[]
             {
                 "https://www.radiojavan.com/mp3s/mp3/Shadmehr-Aghili-Jange-Delam",
                 "https://www.radiojavan.com/mp3s/mp3/Ali-Lohrasbi-Donyaye-Bi-To",
@@ -69,11 +65,25 @@ namespace RadioJavanCrawler
                 "https://www.radiojavan.com/mp3s/mp3/Ebi-Geryeh-Nakon?playlist=359deb697042&index=0",
                 "https://www.radiojavan.com/mp3s/mp3/Ebi-Gheseh-Eshgh?playlist=7efb8584b333&index=0",
                 "https://www.radiojavan.com/mp3s/mp3/Googoosh-Pol?playlist=d648679ae626&index=0"
-            };
+            };;
 
+        [Obsolete]
+        static void Main(string[] args)
+        {
             var driver = new ChromeDriver(); ;
             driver.Navigate().GoToUrl(urls[0]);
 
+            ExtractSongs(driver);
+
+            var json = JsonSerializer.Serialize(songs, new JsonSerializerOptions() { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+
+            File.WriteAllText("songs.json", json);
+
+            Console.WriteLine(songs.Last().Id);
+        }
+
+        private static void ExtractSongs(ChromeDriver driver)
+        {
             int id = 1;
             Task.Delay(1000).Wait();
 
@@ -84,43 +94,44 @@ namespace RadioJavanCrawler
                 driver.Navigate().GoToUrl(url);
                 for (int i = 0; i < 50; i++)
                 {
-                    try
-                    {
-                        Task.Delay(1000).Wait();
-                        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1));
-                        IWebElement artistElement = driver.FindElement(By.CssSelector(".farsiText > .artist"));
-                        IWebElement songElement = driver.FindElement(By.CssSelector(".farsiText > .song"));
-                        var lyricsElemendButton = driver.FindElement(By.LinkText("Lyrics"));
-                        lyricsElemendButton.Click();
-                        string text = Getlyrics(driver);
-
-                        string src = GetCover(driver);
-
-                        var path = $"https://host2.rj-mw1.com/media/mp3/mp3-256/{driver.Url.Split("/").Last().Split("?")[0]}.mp3";
-
-                        Song item = new Song(id++, artistElement.Text, songElement.Text, text, path, src);
-
-                        if (!songs.Any(x => x.Name == item.Name && x.Artist == item.Artist))
-                        {
-                            songs.Add(item);
-                        }
-
-                        Next(driver);
-
-                        Console.WriteLine(id);
-                    }
-                    catch
-                    {
-
-                    }
+                    id = ExtractSong(driver, id);
                 }
             }
+        }
 
-            var json = JsonSerializer.Serialize(songs, new JsonSerializerOptions() { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+        private static int ExtractSong(ChromeDriver driver, int id)
+        {
+            try
+            {
+                Task.Delay(1000).Wait();
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1));
+                IWebElement artistElement = driver.FindElement(By.CssSelector(".farsiText > .artist"));
+                IWebElement songElement = driver.FindElement(By.CssSelector(".farsiText > .song"));
+                var lyricsElemendButton = driver.FindElement(By.LinkText("Lyrics"));
+                lyricsElemendButton.Click();
+                string text = Getlyrics(driver);
 
-            File.WriteAllText("songs.json", json);
+                string src = GetCover(driver);
 
-            Console.WriteLine(songs.Last().Id);
+                var path = $"https://host2.rj-mw1.com/media/mp3/mp3-256/{driver.Url.Split("/").Last().Split("?")[0]}.mp3";
+
+                Song item = new Song(id++, artistElement.Text, songElement.Text, text, path, src);
+
+                if (!songs.Any(x => x.Name == item.Name && x.Artist == item.Artist))
+                {
+                    songs.Add(item);
+                }
+
+                Next(driver);
+
+                Console.WriteLine(id);
+            }
+            catch
+            {
+
+            }
+
+            return id;
         }
 
         private static string GetCover(ChromeDriver driver)
