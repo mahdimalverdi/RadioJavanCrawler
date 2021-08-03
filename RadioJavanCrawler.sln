@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31321.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadioJavanCrawler", "RadioJavanCrawler\RadioJavanCrawler.csproj", "{33622B6D-C0E8-4EF7-AA9D-0791FF54E6D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{33622B6D-C0E8-4EF7-AA9D-0791FF54E6D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33622B6D-C0E8-4EF7-AA9D-0791FF54E6D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33622B6D-C0E8-4EF7-AA9D-0791FF54E6D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33622B6D-C0E8-4EF7-AA9D-0791FF54E6D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA8FE722-F657-4405-B19F-020DC6E83320}
+	EndGlobalSection
+EndGlobal
